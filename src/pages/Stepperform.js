@@ -65,7 +65,7 @@ export default function Stepperform() {
 
   // Function to handle adding user to the list
   const handleAddUserToList = async () => {
-    console.log("Fetching updated user list...");
+  
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.get(
@@ -77,9 +77,9 @@ export default function Stepperform() {
         }
       );
       setNewUserData(response.data);
-      console.log("Updated user list:", response.data);
+    
     } catch (error) {
-      console.error("Error fetching updated user list:", error);
+     
     }
   };
 
@@ -119,23 +119,22 @@ export default function Stepperform() {
 
         // Assuming you want to navigate to the next step after a successful API call
         setActiveStep((prevActiveStep) => {
-          console.log("Setting activeStep to", prevActiveStep + 1);
+       
           return prevActiveStep + 1;
         });
 
-        console.log("After setActiveStep", activeStep);
+       
       } catch (error) {
         // Handle errors
-        console.error("Error creating user:", error);
+      
       }
     } else {
       // If it's not the last step, just move to the next step
       setActiveStep((prevActiveStep) => {
-        console.log("Setting activeStep to", prevActiveStep + 1);
+    
         return prevActiveStep + 1;
       });
 
-      console.log("Rendering with activeStep", activeStep);
     }
   };
 
@@ -147,7 +146,7 @@ export default function Stepperform() {
     localStorage.setItem("authToken", authToken);
   }, [authToken]);
   useEffect(() => {
-    console.log("Component re-rendered with activeStep", activeStep);
+  
   }, [activeStep]);
 
   return (
