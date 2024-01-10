@@ -1,26 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import List from "./pages/List";
-import Stepperform from "./pages/Stepperform";
-import Product from "./pages/sales/Listproduct";
-import Addproduct from "./pages/sales/Addproduct";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/Login';
+import List from './pages/List';
+import Stepperform from './pages/Stepperform';
+import Product from './pages/sales/Listproduct';
+import Addproduct from './pages/sales/Addproduct';
+
 function App() {
- return (
-<>
-<div className="App">
-      <Router>
-        <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/List" element={<List />} />
-        <Route path="/Stepperform" element={<Stepperform />} />
-        <Route path="/Product" element={<Product />} />
-        <Route path="/Add-product" element={<Addproduct />} />
-       </Routes>
-      </Router>
-    </div>
-</>
+  const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    const authToken = localStorage.getItem('authToken');
+    if (authToken) {
+      setAuthenticated(true);
+    }
+  }, []);
+
+  return (
+    <>
+      <div className="App">
+        <Router>
+          <Routes>
+            <Route path="/" element={<Login setAuthenticated={setAuthenticated} />} />
+            <Route path="/List" element={authenticated ? <List /> : <Navigate to="/" />} />
+            <Route path="/Stepperform" element={authenticated ? <Stepperform /> : <Navigate to="/" />} />
+            <Route path="/Product" element={authenticated ? <Product /> : <Navigate to="/" />} />
+            <Route path="/Add-product" element={authenticated ? <Addproduct /> : <Navigate to="/" />} />
+          </Routes>
+        </Router>
+      </div>
+    </>
   );
 }
 

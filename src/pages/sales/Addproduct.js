@@ -53,6 +53,11 @@ const AddProduct = () => {
     }
   };
 
+  
+
+
+
+
   return (
     <>
       <Layout>

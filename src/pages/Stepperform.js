@@ -19,8 +19,7 @@ export default function Stepperform() {
   const [createdUser, setCreatedUser] = useState(null);
   const [newUserData, setNewUserData] = useState([]);
 
-// ... rest of your List component code
-
+  // ... rest of your List component code
 
   const [formData, setFormData] = useState({
     skills: [],
@@ -51,23 +50,21 @@ export default function Stepperform() {
               formData={formData}
               setFormData={setFormData}
             />
-            ;
           </>
         );
       case 3:
         return (
           <>
-            <Credentaildetails formData={formData} setFormData={setFormData} />;
+            <Credentaildetails formData={formData} setFormData={setFormData} />
           </>
         );
       default:
         return "Unknown step";
     }
-
   };
 
-   // Function to handle adding user to the list
-   const handleAddUserToList = async () => {
+  // Function to handle adding user to the list
+  const handleAddUserToList = async () => {
     console.log("Fetching updated user list...");
     try {
       const token = localStorage.getItem("authToken");
@@ -86,14 +83,7 @@ export default function Stepperform() {
     }
   };
 
-
-
-
-
-
-
   const handleNext = async () => {
- 
     const allSkills = formData.skills.map((skill) => skill.trim());
 
     if (activeStep === steps.length - 1) {
@@ -127,13 +117,12 @@ export default function Stepperform() {
         setNewUserData(response.data);
         handleAddUserToList();
 
-
         // Assuming you want to navigate to the next step after a successful API call
         setActiveStep((prevActiveStep) => {
           console.log("Setting activeStep to", prevActiveStep + 1);
           return prevActiveStep + 1;
         });
-        
+
         console.log("After setActiveStep", activeStep);
       } catch (error) {
         // Handle errors
@@ -145,7 +134,7 @@ export default function Stepperform() {
         console.log("Setting activeStep to", prevActiveStep + 1);
         return prevActiveStep + 1;
       });
-      
+
       console.log("Rendering with activeStep", activeStep);
     }
   };
@@ -160,7 +149,6 @@ export default function Stepperform() {
   useEffect(() => {
     console.log("Component re-rendered with activeStep", activeStep);
   }, [activeStep]);
-  
 
   return (
     <Layout>
