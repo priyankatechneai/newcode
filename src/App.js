@@ -1,104 +1,50 @@
+// App.js
 
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/Login';
+import List from './pages/List';
+import Stepperform from './pages/Stepperform';
+import Product from './pages/sales/Listproduct';
+import Addproduct from './pages/sales/Addproduct';
+import { isAuthenticated, getRole } from './component/authService'
 
-import React, { useState, useEffect } from "react";
-import "./App.css";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
-import Login from "./pages/Login";
-import List from "./pages/List";
-import Stepperform from "./pages/Stepperform";
-import Product from "./pages/sales/Listproduct";
-import Addproduct from "./pages/sales/Addproduct";
+const PrivateRoute = ({ element, path, role }) => {
+  const isAuthenticatedUser = isAuthenticated();
+  const userRole = getRole();
+
+  if (!isAuthenticatedUser) {
+    // Redirect to login if not authenticated
+    return <Navigate to="/" />;
+  }
+
+  if (role && role !== userRole) {
+    // Redirect to login if the user's role doesn't match the required role
+    return <Navigate to="/" />;
+  }
+
+  return element;
+};
 
 function App() {
-  const [authenticated, setAuthenticated] = useState(
-    () => localStorage.getItem("authToken") !== null
-  );
-  const [roleId, setRoleId] = useState(localStorage.getItem("userRoleId"));
-
-  const handleLogin = (roleId) => {
-    setAuthenticated(true);
-    setRoleId(roleId);
-    localStorage.setItem("authToken", "yourAuthToken"); // Replace with actual token
-    localStorage.setItem("userRoleId", roleId);
-  };
-
-  const handleLogout = () => {
-    setAuthenticated(false);
-    setRoleId(null);
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userRoleId");
-  };
-
-  useEffect(() => {
-    // Check if the user is authenticated
-    const authToken = localStorage.getItem("authToken");
-    const userRoleId = localStorage.getItem("userRoleId");
-
-    if (authToken) {
-      setAuthenticated(true);
-      setRoleId(userRoleId);
-    }
-  }, []); // Only runs on mount
-
   return (
     <>
       <div className="App">
         <Router>
           <Routes>
-            <Route
-              path="/"
-              element={
-                <Login
-                  setAuthenticated={handleLogin}
-                  setRoleId={setRoleId}
-                  handleLogout={handleLogout}
-                />
-              }
-            />
+            <Route path="/" element={<Login />} />
             <Route
               path="/List"
-              element={
-                authenticated && roleId === "1" ? (
-                  <List />
-                ) : (
-                  <Navigate to="/" />
-                )
-              }
+              element={<PrivateRoute element={<List />} role="1" />}
             />
-            <Route
-              path="/Stepperform"
-              element={
-                authenticated && roleId === "1" ? (
-                  <Stepperform />
-                ) : (
-                  <Navigate to="/" />
-                )
-              }
-            />
+            <Route path="/Stepperform" element={<Stepperform />}role="1" />
             <Route
               path="/Product"
-              element={
-                authenticated && roleId !== "1" ? (
-                  <Product />
-                ) : (
-                  <Navigate to="/" />
-                )
-              }
+              element={<PrivateRoute element={<Product />} role="2" />}
             />
             <Route
               path="/Add-product"
-              element={
-                authenticated && roleId !== "1" ? (
-                  <Addproduct />
-                ) : (
-                  <Navigate to="/" />
-                )
-              }
+              element={<PrivateRoute element={<Addproduct />} role="2" />}
             />
           </Routes>
         </Router>
@@ -108,4 +54,3 @@ function App() {
 }
 
 export default App;
-

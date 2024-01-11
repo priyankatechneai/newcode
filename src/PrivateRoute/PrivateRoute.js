@@ -1,17 +1,16 @@
-// PrivateRoute.js
 import React from 'react';
-import { Route, Navigate } from 'react-router-dom';
+import { Navigate, Route } from 'react-router-dom';
 
 const PrivateRoute = ({ element, requiredRole }) => {
-  const isAuthenticated = localStorage.getItem('authToken');
-  const userRole = localStorage.getItem('userRoleId');
+  const authToken = localStorage.getItem('authToken');
+  const userRoleId = localStorage.getItem('userRoleId');
 
-  if (!isAuthenticated || (requiredRole && userRole !== requiredRole)) {
-    // Redirect to the login page if not authenticated or role mismatch
-    return <Navigate to="/login" />;
+  if (!authToken || !userRoleId || userRoleId !== requiredRole) {
+    // Redirect to the login page if not authenticated or not the required role
+    return <Navigate to="/" />;
   }
 
-  // Render the component if authenticated and roles match
+  // Allow access to the protected route
   return <Route element={element} />;
 };
 
