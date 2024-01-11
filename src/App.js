@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import {
@@ -61,7 +63,11 @@ function App() {
             <Route
               path="/List"
               element={
-                authenticated && roleId === "1" ? <List /> : <Navigate to="/" />
+                authenticated && roleId === "1" ? (
+                  <List />
+                ) : (
+                  <Navigate to="/" />
+                )
               }
             />
             <Route
@@ -102,3 +108,4 @@ function App() {
 }
 
 export default App;
+

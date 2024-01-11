@@ -20,6 +20,7 @@ const Login = () => {
 
       localStorage.setItem("authToken", token);
       localStorage.setItem("userRoleId", roleId);
+      
 
       if (roleId === 1) {
         // Admin
