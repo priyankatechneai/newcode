@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading,setLoading]=useState(false)
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -20,7 +20,6 @@ const Login = () => {
 
       localStorage.setItem("authToken", token);
       localStorage.setItem("userRoleId", roleId);
-      
 
       if (roleId === 1) {
         // Admin
@@ -88,7 +87,7 @@ const Login = () => {
                     className="w-full px-4 py-3 font-bold tracking-wider text-[#000] rounded-lg bg-white focus:outline-none focus:shadow-outline"
                     type="button"
                     onClick={handleLogin}
-                    disabled={loading}
+                    disabled={loading} 
                   >
                     {loading ? (
                       <div className="flex justify-center items-center">
