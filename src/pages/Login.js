@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import apiService from "../servises/apiServises";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,11 +12,7 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       setLoading(true);
-      const response = await axios.post(
-        "http://codetentacles-006-site36.htempurl.com/api/api/login",
-        { email, password }
-      );
-
+      const response = await apiService.post("/login", { email, password });
       const { token, roleId } = response.data;
 
       localStorage.setItem("authToken", token);

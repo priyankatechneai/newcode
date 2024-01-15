@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import apiService from "../../servises/apiServises";
 import Layout from "../../component/Layout";
 
 const AddProduct = () => {
@@ -32,17 +33,11 @@ const AddProduct = () => {
     formData.append("imagePath", productData.image.name); // Use the file name as the image path
 
     try {
-      const token = localStorage.getItem("authToken");
-      await axios.post(
-        "http://codetentacles-006-site36.htempurl.com/api/api/create-product",
-        formData,
-        {
-          headers: {
-            token: token,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await apiService.post("/create-product", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       // Handle success, maybe redirect or show a success message
       alert("Product added successfully!");

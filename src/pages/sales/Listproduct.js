@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Table from "../../component/VTable";
 import Layout from "../../component/Layout";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import apiService from "../../servises/apiServises";
 
 export default function Product() {
   const [productData, setProductData] = useState([]);
@@ -14,9 +14,8 @@ export default function Product() {
       title: "#",
       dataIndex: "srno",
       key: "srno",
-      
     },
-    { 
+    {
       title: "Product Name",
       dataIndex: "name",
       key: "name",
@@ -54,14 +53,8 @@ export default function Product() {
   // useEffect(() => {
   const fetchProductData = async (pageNumber) => {
     try {
-      const token = localStorage.getItem("authToken");
-      const response = await axios.get(
-        `http://codetentacles-006-site36.htempurl.com/api/api/product-list?page=${pageNumber}&perPage=${perPage}`,
-        {
-          headers: {
-            token: token,
-          },
-        }
+      const response = await apiService.get(
+        `/product-list?page=${pageNumber}&perPage=${perPage}`
       );
 
       setProductData(response.data);

@@ -4,6 +4,7 @@ import Layout from "../component/Layout";
 import { Link } from "react-router-dom";
 import { Trash2 } from "lucide-react";
 import axios from "axios";
+import apiService from "../servises/apiServises";
 
 export default function List() {
   const [list, setList] = useState([]);
@@ -61,16 +62,10 @@ export default function List() {
 
   const fetchListData = useCallback(async () => {
     try {
-      const token = localStorage.getItem("authToken");
       setIsTableLoading(true);
 
-      const response = await axios.get(
-        `http://codetentacles-006-site36.htempurl.com/api/api/seller-list?page=${currentPage}&perPage=${perPage}`,
-        {
-          headers: {
-            token: token,
-          },
-        }
+      const response = await apiService.get(
+        `/seller-list?page=${currentPage}&perPage=${perPage}`
       );
 
       setList(response.data);
@@ -98,19 +93,8 @@ export default function List() {
   }, [currentPage, perPage]);
 
   const handleDeleteUser = async (userId) => {
-    const token = localStorage.getItem("authToken");
-
-    // Check if the user with the specified userId exists in the local state
-
     try {
-      const response = await axios.get(
-        `http://codetentacles-006-site36.htempurl.com/api/api/seller-delete?userId=${userId}`,
-        {
-          headers: {
-            token: token,
-          },
-        }
-      );
+      const response = await apiService.get(`/seller-delete?userId=${userId}`);
       fetchListData();
       alert(response.data.message);
     } catch (error) {

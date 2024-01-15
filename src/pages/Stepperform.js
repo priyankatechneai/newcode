@@ -6,7 +6,7 @@ import Credentaildetails from "./stepperform/credentaildetails";
 import { Stepper, Step, StepLabel, Button, Typography } from "@mui/material";
 import Layout from "../component/Layout";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import apiService from "../servises/apiServises";
 const steps = [
   "Personal Information",
   "Details",
@@ -65,22 +65,11 @@ export default function Stepperform() {
 
   // Function to handle adding user to the list
   const handleAddUserToList = async () => {
-  
     try {
-      const token = localStorage.getItem("authToken");
-      const response = await axios.get(
-        "http://codetentacles-006-site36.htempurl.com/api/api/seller-list",
-        {
-          headers: {
-            token: token,
-          },
-        }
-      );
-      setNewUserData(response.data);
     
-    } catch (error) {
-     
-    }
+      const response = await apiService.get("/seller-list");
+      setNewUserData(response.data);
+    } catch (error) {}
   };
 
   const handleNext = async () => {
@@ -88,8 +77,7 @@ export default function Stepperform() {
 
     if (activeStep === steps.length - 1) {
       try {
-        const response = await axios.post(
-          "http://codetentacles-006-site36.htempurl.com/api/api/seller-create",
+        const response = await apiService.post("/seller-create",
           {
             name: formData.name,
             profileImage:
@@ -119,22 +107,16 @@ export default function Stepperform() {
 
         // Assuming you want to navigate to the next step after a successful API call
         setActiveStep((prevActiveStep) => {
-       
           return prevActiveStep + 1;
         });
-
-       
       } catch (error) {
         // Handle errors
-      
       }
     } else {
       // If it's not the last step, just move to the next step
       setActiveStep((prevActiveStep) => {
-    
         return prevActiveStep + 1;
       });
-
     }
   };
 
@@ -145,9 +127,7 @@ export default function Stepperform() {
   useEffect(() => {
     localStorage.setItem("authToken", authToken);
   }, [authToken]);
-  useEffect(() => {
-  
-  }, [activeStep]);
+  useEffect(() => {}, [activeStep]);
 
   return (
     <Layout>
