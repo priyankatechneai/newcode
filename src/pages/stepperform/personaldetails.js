@@ -15,7 +15,7 @@ export default function Personaldetails({ formData, setFormData }) {
     });
   };
 
-  console.log("formData",formData);
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
