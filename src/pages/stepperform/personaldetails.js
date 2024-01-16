@@ -30,9 +30,7 @@ export default function Personaldetails({ formData, setFormData }) {
     }
   };
 
-  // Update the parent form data when this component's state changes
-  // This ensures that the parent component (Stepperform) has the latest data
-  // and can be used for further processing or submission.
+
   React.useEffect(() => {
     setFormData((prevData) => ({
       ...prevData,

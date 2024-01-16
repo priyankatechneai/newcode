@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
+import {
+  fetchCountryData,
+  fetchStateDataByCountry,
+} from "../../servises/apiServises";
 
 export default function Countrydetails({ formData, setFormData }) {
   const { country_id, state_id, country_name, state_name } = formData;
@@ -11,22 +15,52 @@ export default function Countrydetails({ formData, setFormData }) {
     state_id ? { value: state_id, label: state_name } : null
   );
 
-  const country = [
-    { value: "1", label: "India" },
-    { value: "2", label: "Afghanistan" },
-    { value: "3", label: "Albania" },
-  ];
-  const state = [
-    { value: "1", label: "Maharashtra" },
-    { value: "2", label: "Gujarat" },
-    { value: "3", label: "Kerala" },
-  ];
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
 
   // Update local state when formData changes externally
+
   useEffect(() => {
-    setSelectedCountry(country_id ? { value: country_id, label: country_name } : null);
-    setSelectedState(state_id ? { value: state_id, label: state_name } : null);
-  }, [country_id, state_id, country_name, state_name]);
+    // Fetch country data when the component mounts
+    fetchCountryData()
+      .then((response) => {
+        const data = response?.data;
+        console.log("Country data received:", data);
+
+        if (Array.isArray(data)) {
+          setCountries(
+            data.map((country) => ({
+              value: country.countryId,
+              label: country.countryName,
+            }))
+          );
+        } else {
+          console.error("Country data is not in the expected format (array).");
+        }
+      })
+      .catch((error) => console.error("Error fetching country data:", error));
+
+    // Fetch state data based on the selected country
+    if (selectedCountry) {
+      fetchStateDataByCountry(selectedCountry.value)
+        .then((response) => {
+          const data = response?.data;
+          console.log("State data received:", data);
+
+          if (Array.isArray(data)) {
+            setStates(
+              data.map((state) => ({
+                value: state.stateId,
+                label: state.stateName,
+              }))
+            );
+          } else {
+            console.error("State data is not in the expected format (array).");
+          }
+        })
+        .catch((error) => console.error("Error fetching state data:", error));
+    }
+  }, [selectedCountry]);
 
   const handleCountryChange = (selectedOption) => {
     setSelectedCountry(selectedOption);
@@ -64,7 +98,7 @@ export default function Countrydetails({ formData, setFormData }) {
                   id="country"
                   className="basic-single text-left text-sm text-gray-700 rounded border border-gray-200"
                   classNamePrefix="select"
-                  options={country}
+                  options={countries}
                   value={selectedCountry}
                   onChange={handleCountryChange}
                 />
@@ -82,7 +116,7 @@ export default function Countrydetails({ formData, setFormData }) {
                   classNamePrefix="select"
                   value={selectedState}
                   onChange={handleStateChange}
-                  options={state}
+                  options={states && states}
                 />
               </div>
             </div>

@@ -6,7 +6,7 @@ import Credentaildetails from "./stepperform/credentaildetails";
 import { Stepper, Step, StepLabel, Button, Typography } from "@mui/material";
 import Layout from "../component/Layout";
 import { Link } from "react-router-dom";
-import apiService from "../servises/apiServises";
+import { fetchUserList, submitSellerForm } from "../servises/apiServises";
 const steps = [
   "Personal Information",
   "Details",
@@ -17,6 +17,10 @@ const steps = [
 export default function Stepperform() {
   const [activeStep, setActiveStep] = useState(0);
   const [createdUser, setCreatedUser] = useState(null);
+
+  const [authToken, setAuthToken] = useState(
+    localStorage.getItem("authToken") || ""
+  );
   const [newUserData, setNewUserData] = useState([]);
 
   // ... rest of your List component code
@@ -66,63 +70,30 @@ export default function Stepperform() {
   // Function to handle adding user to the list
   const handleAddUserToList = async () => {
     try {
-    
-      const response = await apiService.get("/seller-list");
-      setNewUserData(response.data);
-    } catch (error) {}
+      const userList = await fetchUserList();
+      setNewUserData(userList);
+    } catch (error) {
+      // Handle errors if needed
+      console.error("Error fetching updated user list:", error);
+    }
   };
-
   const handleNext = async () => {
-    const allSkills = formData.skills.map((skill) => skill.trim());
-
     if (activeStep === steps.length - 1) {
       try {
-        const response = await apiService.post("/seller-create",
-          {
-            name: formData.name,
-            profileImage:
-              "http://codetentacles-006-site36.htempurl.com/api/public/Image/202312150649download (14).jfif",
-            gender: formData.gender,
-            phone: formData.phoneNumber,
-            password: formData.password,
-            confirmPassword: formData.confirmPassword,
-            countryId: formData.selectedCountry?.value,
-            stateId: formData.selectedState?.value,
-            email: formData.email,
-            skills: allSkills,
-          },
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              token: authToken,
-            },
-          }
-        );
-
-        // Handle the API response as needed
+        const response = await submitSellerForm(formData, authToken);
 
         setCreatedUser(response.data);
         setNewUserData(response.data);
         handleAddUserToList();
 
-        // Assuming you want to navigate to the next step after a successful API call
-        setActiveStep((prevActiveStep) => {
-          return prevActiveStep + 1;
-        });
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
       } catch (error) {
-        // Handle errors
+        console.error("Error submitting seller form:", error);
       }
     } else {
-      // If it's not the last step, just move to the next step
-      setActiveStep((prevActiveStep) => {
-        return prevActiveStep + 1;
-      });
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
-
-  const [authToken, setAuthToken] = useState(
-    localStorage.getItem("authToken") || ""
-  );
 
   useEffect(() => {
     localStorage.setItem("authToken", authToken);

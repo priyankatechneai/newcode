@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Table from "../../component/VTable";
 import Layout from "../../component/Layout";
 import { Link } from "react-router-dom";
-import apiService from "../../servises/apiServises";
+import apiService, { fetchProductList } from "../../servises/apiServises";
 
 export default function Product() {
   const [productData, setProductData] = useState([]);
@@ -18,6 +18,7 @@ export default function Product() {
     {
       title: "Product Name",
       dataIndex: "name",
+
       key: "name",
     },
     {
@@ -40,6 +41,7 @@ export default function Product() {
     },
     {
       title: "Description",
+      width:50,
       dataIndex: "description",
       key: "description",
     },
@@ -53,13 +55,11 @@ export default function Product() {
   // useEffect(() => {
   const fetchProductData = async (pageNumber) => {
     try {
-      const response = await apiService.get(
-        `/product-list?page=${pageNumber}&perPage=${perPage}`
-      );
+      const response = await fetchProductList(pageNumber, perPage);
 
-      setProductData(response.data);
+      setProductData(response);
       setCurrentPage(pageNumber);
-      setTotalPages(response.data.lastPage);
+      setTotalPages(response.lastPage);
     } catch (error) {
       console.error("Error fetching product data:", error);
     }

@@ -1,23 +1,23 @@
-import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import apiService from "../servises/apiServises";
+import { loginUser } from "../servises/apiServises";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading,setLoading]=useState(false)
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
+  const navigate = useNavigate();
   const handleLogin = async () => {
     try {
       setLoading(true);
-      const response = await apiService.post("/login", { email, password });
-      const { token, roleId } = response.data;
+      setError("");
+      const response = await loginUser(email, password);
+      const { token, roleId } = response;
 
       localStorage.setItem("authToken", token);
       localStorage.setItem("userRoleId", roleId);
-      
 
       if (roleId === 1) {
         // Admin
@@ -31,13 +31,16 @@ const Login = () => {
     } catch (error) {
       if (error.response && error.response.status === 401) {
         // Handle token expiration, redirect to login
+        setError("Invalid email or password.");
         navigate("/login");
       } else {
         console.error("Login failed:", error);
+        setError("Invalid Credential");
       }
+    } finally {
+      setLoading(false);
     }
   };
-
   return (
     <section
       className="border-red-500 login-form min-h-screen flex items-center justify-center bg-img"
@@ -85,7 +88,7 @@ const Login = () => {
                     className="w-full px-4 py-3 font-bold tracking-wider text-[#000] rounded-lg bg-white focus:outline-none focus:shadow-outline"
                     type="button"
                     onClick={handleLogin}
-                    disabled={loading} 
+                    disabled={loading}
                   >
                     {loading ? (
                       <div className="flex justify-center items-center">
@@ -96,6 +99,9 @@ const Login = () => {
                       "Login"
                     )}
                   </button>
+                </div>
+                <div className="text-red-500 text-sm mb-4 text-center">
+                  {error}
                 </div>
               </form>
             </div>

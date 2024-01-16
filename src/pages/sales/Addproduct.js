@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import apiService from "../../servises/apiServises";
+import { addProduct, uploadImage } from "../../servises/apiServises";
 import Layout from "../../component/Layout";
 
 const AddProduct = () => {
@@ -30,13 +29,18 @@ const AddProduct = () => {
     formData.append("name", productData.name);
     formData.append("description", productData.description);
     formData.append("price", productData.price);
-    formData.append("imagePath", productData.image.name); // Use the file name as the image path
+    formData.append("imagePath", productData.imagePath); // Use the file name as the image path
 
     try {
-      const response = await apiService.post("/create-product", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      // Upload the image first
+      const imageData = new FormData();
+      imageData.append("image", productData.image);
+      const imageResponse = await uploadImage(imageData);
+
+      // Add the product with the image path
+      const productResponse = await addProduct({
+        ...productData,
+        imagePath: imageResponse.imagePath,
       });
 
       // Handle success, maybe redirect or show a success message

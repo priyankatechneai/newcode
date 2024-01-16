@@ -3,14 +3,15 @@ import Table from "../component/VTable";
 import Layout from "../component/Layout";
 import { Link } from "react-router-dom";
 import { Trash2 } from "lucide-react";
-import axios from "axios";
-import apiService from "../servises/apiServises";
+import {fetchListData,deleteUser} from '../servises/apiServises.js'
+
 
 export default function List() {
   const [list, setList] = useState([]);
   const [perPage, setPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+ 
   const [isTableLoading, setIsTableLoading] = useState(false);
 
   const columns = [
@@ -22,6 +23,7 @@ export default function List() {
     {
       title: " Name",
       dataIndex: "name",
+      
       key: "name",
     },
     {
@@ -40,6 +42,7 @@ export default function List() {
       dataIndex: "gender",
       key: "gender",
     },
+    
     {
       title: "Action",
       render: (item) => (
@@ -60,22 +63,19 @@ export default function List() {
     },
   ];
 
-  const fetchListData = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     try {
       setIsTableLoading(true);
 
-      const response = await apiService.get(
-        `/seller-list?page=${currentPage}&perPage=${perPage}`
-      );
+      const data = await fetchListData(currentPage, perPage);
 
-      setList(response.data);
-      setTotalPages(response.data.lastPage);
+      setList(data);
+      setTotalPages(data.lastPage);
       setIsTableLoading(false);
     } catch (error) {
       console.error("Error fetching seller list data:", error);
-      // Handle error (e.g., show an error message to the user)
     }
-  });
+  }, [currentPage, perPage]);
 
   const handlePageChange = (event, newPage) => {
     setCurrentPage(newPage);
@@ -85,18 +85,18 @@ export default function List() {
     setPerPage(value);
 
     setCurrentPage(1); // Reset to the first page when changing per page
-    fetchListData(); // Fetch data for the first page with the new perPage value
+    fetchData(); // Fetch data for the first page with the new perPage value
   };
 
   useEffect(() => {
-    fetchListData();
-  }, [currentPage, perPage]);
+    fetchData();
+  }, [fetchData]);
 
   const handleDeleteUser = async (userId) => {
     try {
-      const response = await apiService.get(`/seller-delete?userId=${userId}`);
-      fetchListData();
-      alert(response.data.message);
+      const response = await deleteUser(userId);
+      fetchData();
+      alert(response.message);
     } catch (error) {
       console.error("Error deleting user:", error);
 
@@ -111,6 +111,7 @@ export default function List() {
       }
     }
   };
+
 
   return (
     <>
