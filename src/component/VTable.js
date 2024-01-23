@@ -11,6 +11,7 @@ const Table = ({
   page,
   handlePageChange,
   currentPage,
+  productData,
 
   handleRowsPerPageChange,
   isTableLoading,
@@ -238,6 +239,7 @@ const Table = ({
           <option value={20}>20 per page</option>
           <option value={50}>50 per page</option>
         </select>
+        <p>Total Price: {productData}</p>
         <Pagination
           page={page}
           onChange={handlePageChange}

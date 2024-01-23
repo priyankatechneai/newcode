@@ -9,6 +9,13 @@ export default function Product() {
   const [perPage, setPerPage] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+
+  const prices = productData.map((d)=>d.price)
+  const totalPrice =prices.reduce((sum,prices)=>sum+prices,0)
+  console.log(totalPrice)
+  
+
   const columns = [
     {
       title: "#",
@@ -57,7 +64,8 @@ export default function Product() {
     try {
       const response = await fetchProductList(pageNumber, perPage);
 
-      setProductData(response);
+      setProductData(response.data);
+      console.log(response.data)
       setCurrentPage(pageNumber);
       setTotalPages(response.lastPage);
     } catch (error) {
@@ -104,12 +112,13 @@ export default function Product() {
 
             <Table
               cols={columns}
-              data={productData.data || []}
+              data={productData}
               totalPages={totalPages} // Adjust this based on your API response
               page={currentPage} // Pass the current page to the Table component
               handlePageChange={handlePageChange}
               handleRowsPerPageChange={handleRowsPerPageChange}
-              selectedRowsPerPage={perPage} //
+              selectedRowsPerPage={perPage} 
+              productData={totalPrice}
             />
           </div>
         </div>
